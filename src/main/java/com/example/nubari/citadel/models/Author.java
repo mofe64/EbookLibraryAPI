@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @NoArgsConstructor
-@Document(collection = "authors")
+@Document(collection = "Authors")
 public class Author {
     @Id
     private String id;
