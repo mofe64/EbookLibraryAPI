@@ -23,6 +23,7 @@ public class User {
     private String firstname;
     private String lastname;
     private String password;
+
     @DBRef
     private Set<Role> roles = new HashSet<>();
 }
