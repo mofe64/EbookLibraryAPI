@@ -12,9 +12,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-@RequiredArgsConstructor
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "users")
 public class User {
     @Id

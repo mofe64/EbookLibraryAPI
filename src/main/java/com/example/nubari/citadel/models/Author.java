@@ -14,7 +14,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Document(collection = "Authors")
 public class Author {
