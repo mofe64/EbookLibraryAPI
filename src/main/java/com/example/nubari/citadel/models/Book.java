@@ -28,7 +28,6 @@ public class Book {
     @DBRef
     private Author author;
     private LocalDate publishDate;
-
     @DBRef
     private Genre genre;
 }

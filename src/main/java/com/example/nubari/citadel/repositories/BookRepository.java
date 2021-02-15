@@ -9,8 +9,6 @@ import org.springframework.stereotype.Repository;
 
 
 import java.time.LocalDate;
-
-import java.util.List;
 @Repository
 public interface BookRepository extends MongoRepository<Book, String> {
     Slice<Book> findBookByPublishDateAfter(LocalDate date, Pageable pageable);

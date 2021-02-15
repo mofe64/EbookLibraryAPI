@@ -40,6 +40,7 @@ class AuthorRepositoryTest {
 
     @AfterEach
     void tearDown() {
+        authorRepository.deleteAll();
     }
 
     @Test
@@ -59,7 +60,7 @@ class AuthorRepositoryTest {
         Slice<Author> authorsFirstPage = authorRepository.findAuthorByFirstnameStartingWith("Max", paging);
         assertEquals(2, authorsFirstPage.getContent().size());
         assertEquals(author1, authorsFirstPage.getContent().get(0));
-        assertEquals(author2, authorsFirstPage.getContent().get(0));
+        assertEquals(author2, authorsFirstPage.getContent().get(1));
     }
 
     @Test
