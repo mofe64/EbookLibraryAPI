@@ -10,11 +10,10 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.parameters.P;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -36,6 +35,7 @@ class BookRepositoryTest {
 
     @AfterEach
     void tearDown() {
+        bookRepository.deleteAll();
     }
 
     @Test
@@ -45,7 +45,7 @@ class BookRepositoryTest {
         book.setLink("SampleLink");
         book.setSummary("SampleSummary");
         book.setTitle("SampleTitle");
-        book.setPublishDate(LocalDateTime.of(2020, 1, 27, 0, 0));
+        book.setPublishDate(LocalDate.of(2020, 1, 27));
         book.setAuthor(savedAuthor);
         Book savedBook = bookRepository.save(book);
         assertNotNull(savedBook.getId());
@@ -53,7 +53,7 @@ class BookRepositoryTest {
         assertEquals("SampleCoverImage", savedBook.getCoverImage());
         assertEquals("SampleSummary", savedBook.getSummary());
         assertEquals("SampleTitle", savedBook.getTitle());
-        assertEquals(LocalDateTime.of(2020, 1, 27, 0, 0), savedBook.getPublishDate());
+        assertEquals(LocalDate.of(2020, 1, 27), savedBook.getPublishDate());
     }
 
     @Test
@@ -61,35 +61,45 @@ class BookRepositoryTest {
         Book book1 = new Book();
         Book book2 = new Book();
         Book book3 = new Book();
-        book1.setPublishDate(LocalDateTime.of(2012, 1, 27, 0, 0));
-        book2.setPublishDate(LocalDateTime.of(2020, 1, 1, 0, 0));
-        book3.setPublishDate(LocalDateTime.of(2009, 1, 1, 0, 0));
+        book1.setPublishDate(LocalDate.of(2012, 1, 27));
+        book2.setPublishDate(LocalDate.of(2020, 1, 1));
+        book3.setPublishDate(LocalDate.of(2009, 1, 2));
         bookRepository.save(book1);
         bookRepository.save(book2);
         bookRepository.save(book3);
-        List<Book> booksPublishedAfter2010 =
-                bookRepository.findBookByPublishDateAfter(LocalDateTime.of(2010, 1, 1, 0, 0));
-        assertEquals(2, booksPublishedAfter2010.size());
-        assertTrue(booksPublishedAfter2010.contains(book1));
-        assertTrue(booksPublishedAfter2010.contains(book2));
-
+        Pageable paging = PageRequest.of(0, 3);
+        Slice<Book> booksPublishedAfter2010 =
+                bookRepository.findBookByPublishDateAfter(LocalDate.of(2010, 1, 1
+                ), paging);
+        assertEquals(2, booksPublishedAfter2010.getContent().size());
+        assertTrue(booksPublishedAfter2010.getContent().contains(book1));
+        assertTrue(booksPublishedAfter2010.getContent().contains(book2));
     }
 
     @Test
     void findBookPublishedBeforeACertainDate() {
         Book book1 = new Book();
+        book1.setTitle("Test");
         Book book2 = new Book();
+        book2.setTitle("Test2");
         Book book3 = new Book();
-        book1.setPublishDate(LocalDateTime.of(2012, 1, 27, 0, 0));
-        book2.setPublishDate(LocalDateTime.of(2020, 1, 1, 0, 0));
-        book3.setPublishDate(LocalDateTime.of(2009, 1, 1, 0, 0));
+        book3.setTitle("Test3");
+        book1.setPublishDate(LocalDate.of(2012, 1, 27));
+        book2.setPublishDate(LocalDate.of(2020, 1, 1));
+        book3.setPublishDate(LocalDate.of(2009, 1, 1));
         bookRepository.save(book1);
         bookRepository.save(book2);
         bookRepository.save(book3);
-        List<Book> booksPublishedBefore2010 =
-                bookRepository.findBookByPublishDateBefore(LocalDateTime.of(2010, 1, 1, 0, 0));
-        assertEquals(1, booksPublishedBefore2010.size());
-        assertTrue(booksPublishedBefore2010.contains(book3));
+        Pageable paging = PageRequest.of(0, 3);
+        Slice<Book> booksPublishedBefore2010 =
+                bookRepository.findBookByPublishDateBefore(LocalDate.of(2010, 1, 1), paging);
+        assertEquals(1, booksPublishedBefore2010.getContent().size());
+        for (Book book : booksPublishedBefore2010.getContent()) {
+            System.out.println("Test");
+            System.out.println(book);
+
+        }
+        assertTrue(booksPublishedBefore2010.getContent().contains(book3));
     }
 
     @Test

@@ -3,14 +3,14 @@ package com.example.nubari.citadel.models;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+
 
 @Data
 @NoArgsConstructor
@@ -27,5 +27,8 @@ public class Book {
     @NotNull
     @DBRef
     private Author author;
-    private LocalDateTime publishDate;
+    private LocalDate publishDate;
+
+    @DBRef
+    private Genre genre;
 }
