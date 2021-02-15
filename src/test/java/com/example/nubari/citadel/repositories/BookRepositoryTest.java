@@ -13,6 +13,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.security.core.parameters.P;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +25,7 @@ class BookRepositoryTest {
     @Autowired
     AuthorRepository authorRepository;
     Author savedAuthor;
+
     @BeforeEach
     void setUp() {
         Author sampleAuthor = new Author();
@@ -35,14 +37,15 @@ class BookRepositoryTest {
     @AfterEach
     void tearDown() {
     }
+
     @Test
-    void testRepositorySaveMethod(){
+    void testRepositorySaveMethod() {
         Book book = new Book();
         book.setCoverImage("SampleCoverImage");
         book.setLink("SampleLink");
         book.setSummary("SampleSummary");
         book.setTitle("SampleTitle");
-        book.setPublishDate(LocalDateTime.of(2020, 1,27,0,0));
+        book.setPublishDate(LocalDateTime.of(2020, 1, 27, 0, 0));
         book.setAuthor(savedAuthor);
         Book savedBook = bookRepository.save(book);
         assertNotNull(savedBook.getId());
@@ -50,21 +53,22 @@ class BookRepositoryTest {
         assertEquals("SampleCoverImage", savedBook.getCoverImage());
         assertEquals("SampleSummary", savedBook.getSummary());
         assertEquals("SampleTitle", savedBook.getTitle());
-        assertEquals(LocalDateTime.of(2020, 1, 27, 0,0), savedBook.getPublishDate());
+        assertEquals(LocalDateTime.of(2020, 1, 27, 0, 0), savedBook.getPublishDate());
     }
+
     @Test
     void findBooksPublishedAfterACertainDate() {
         Book book1 = new Book();
         Book book2 = new Book();
         Book book3 = new Book();
-        book1.setPublishDate(LocalDateTime.of(2012, 1,27,0,0));
-        book2.setPublishDate(LocalDateTime.of(2020, 1,1,0,0));
-        book3.setPublishDate(LocalDateTime.of(2009, 1, 1,0,0));
+        book1.setPublishDate(LocalDateTime.of(2012, 1, 27, 0, 0));
+        book2.setPublishDate(LocalDateTime.of(2020, 1, 1, 0, 0));
+        book3.setPublishDate(LocalDateTime.of(2009, 1, 1, 0, 0));
         bookRepository.save(book1);
         bookRepository.save(book2);
         bookRepository.save(book3);
         List<Book> booksPublishedAfter2010 =
-                bookRepository.findBookByPublishDateAfter(LocalDateTime.of(2010, 1,1,0,0));
+                bookRepository.findBookByPublishDateAfter(LocalDateTime.of(2010, 1, 1, 0, 0));
         assertEquals(2, booksPublishedAfter2010.size());
         assertTrue(booksPublishedAfter2010.contains(book1));
         assertTrue(booksPublishedAfter2010.contains(book2));
@@ -76,19 +80,20 @@ class BookRepositoryTest {
         Book book1 = new Book();
         Book book2 = new Book();
         Book book3 = new Book();
-        book1.setPublishDate(LocalDateTime.of(2012, 1,27,0,0));
-        book2.setPublishDate(LocalDateTime.of(2020, 1,1,0,0));
-        book3.setPublishDate(LocalDateTime.of(2009, 1, 1,0,0));
+        book1.setPublishDate(LocalDateTime.of(2012, 1, 27, 0, 0));
+        book2.setPublishDate(LocalDateTime.of(2020, 1, 1, 0, 0));
+        book3.setPublishDate(LocalDateTime.of(2009, 1, 1, 0, 0));
         bookRepository.save(book1);
         bookRepository.save(book2);
         bookRepository.save(book3);
         List<Book> booksPublishedBefore2010 =
-                bookRepository.findBookByPublishDateBefore(LocalDateTime.of(2010, 1,1,0,0));
+                bookRepository.findBookByPublishDateBefore(LocalDateTime.of(2010, 1, 1, 0, 0));
         assertEquals(1, booksPublishedBefore2010.size());
         assertTrue(booksPublishedBefore2010.contains(book3));
     }
+
     @Test
-    void testFindBooksByTitle(){
+    void testFindBooksByTitle() {
         Book book1 = new Book();
         Book book2 = new Book();
         Book book3 = new Book();
@@ -101,11 +106,17 @@ class BookRepositoryTest {
         bookRepository.save(book2);
         bookRepository.save(book3);
         bookRepository.save(book4);
-        Pageable paging = PageRequest.of(0, 1);
+        Pageable paging = PageRequest.of(0, 2);
         Slice<Book> firstPage = bookRepository.findBooksByTitleContaining("Test", paging);
-        assertEquals(1,firstPage.getSize());
         List<Book> booksOnFirstPage = firstPage.getContent();
-
+        assertEquals(2, booksOnFirstPage.size());
+        assertEquals(book1, booksOnFirstPage.get(0));
+        assertEquals(book2, booksOnFirstPage.get(1));
+        Pageable paging2 = PageRequest.of(1, 2);
+        Slice<Book> secondPage = bookRepository.findBooksByTitleContaining("Test", paging2);
+        List<Book> booksOnSecondPage = secondPage.getContent();
+        assertEquals(1, booksOnSecondPage.size());
+        assertEquals(book4, booksOnSecondPage.get(0));
     }
 
 }
