@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,9 @@ import java.util.List;
 public class Author {
     @Id
     private String id;
+    @NotBlank
     private String firstname;
+    @NotBlank
     private String lastname;
     @DBRef
     private List<Book> books = new ArrayList<>();
