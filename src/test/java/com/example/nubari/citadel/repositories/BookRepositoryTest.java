@@ -2,6 +2,7 @@ package com.example.nubari.citadel.repositories;
 
 import com.example.nubari.citadel.models.Author;
 import com.example.nubari.citadel.models.Book;
+import com.example.nubari.citadel.models.Genre;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ class BookRepositoryTest {
     BookRepository bookRepository;
     @Autowired
     AuthorRepository authorRepository;
+    @Autowired
+    GenreRepository genreRepository;
     Author savedAuthor;
 
     @BeforeEach
@@ -127,6 +130,28 @@ class BookRepositoryTest {
         List<Book> booksOnSecondPage = secondPage.getContent();
         assertEquals(1, booksOnSecondPage.size());
         assertEquals(book4, booksOnSecondPage.get(0));
+    }
+
+    @Test
+    void testFindBookByGenre() {
+        Genre genre1 = new Genre();
+        genre1.setName("Fiction");
+        Genre genre2 = new Genre();
+        genre2.setName("Fantasy");
+        Genre fictionGenre = genreRepository.save(genre1);
+        Genre fantasyGenre = genreRepository.save(genre2);
+        Book book1 = new Book();
+        book1.setGenre(fantasyGenre);
+        book1.setTitle("Test");
+        Book book2 = new Book();
+        book2.setGenre(fictionGenre);
+        book2.setTitle("Test2");
+        bookRepository.save(book1);
+        bookRepository.save(book2);
+        Pageable paging = PageRequest.of(0, 1);
+        Slice<Book> matchingBooks = bookRepository.findBooksByGenre(fantasyGenre, paging);
+        assertEquals(1, matchingBooks.getContent().size());
+        assertEquals(book1, matchingBooks.getContent().get(0));
     }
 
 }
